@@ -120,8 +120,8 @@ float* f_realloc(float* input, int length) {
 	if (new_seq != NULL) {
 		return new_seq;
 	} else {
-		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
-		free(input);
+		printf("Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
+		free(new_seq);
 		exit(-1);
 	}
 }
@@ -163,8 +163,8 @@ short* s_realloc(short* input, int length) {
 	if (new_seq != NULL) {
 		return new_seq;
 	} else {
-		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
-		free(input);
+		printf("Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
+		free(new_seq);
 		exit(-1);
 	}
 }	

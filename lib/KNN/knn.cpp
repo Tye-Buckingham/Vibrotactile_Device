@@ -18,7 +18,7 @@ int knn_mfccs_size(float* test, int test_length, int k)
 			}
 		}
 	}
-	// int NONE = 0;
+
 	if(n == 0) {
 		return -5;
 	}
@@ -60,5 +60,6 @@ int knn_mfccs_size(float* test, int test_length, int k)
 		}
 	}
 	free(gs);
+	free(modes);
 	return result;
 }

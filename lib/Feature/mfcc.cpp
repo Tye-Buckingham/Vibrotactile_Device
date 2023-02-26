@@ -1,16 +1,32 @@
 #include "mfcc.h"
 #include <Arduino.h>
 
-int mfcc_size(int signal_length)
+int frame_amount(int signal_length)
 {
 
 	int width = floor(signal_length / glbl_paa);
 	int amount = floor((width - (glbl_window_width)) / (glbl_window_width / glbl_interval_div));
 	if(amount <= 0) {
 		amount = floor(width / glbl_window_width);
-	} 
-	if(amount > glbl_frame_limit) {
-		amount = glbl_frame_limit;
+	}
+	if(amount > 15) {
+		amount = 15;
+	}
+	return amount;	
+	
+}
+
+
+int mfcc_size(int signal_length)
+{
+
+	int width = floor(signal_length / glbl_paa);
+	int amount = floor((width - (glbl_window_width)) / (glbl_window_width / glbl_interval_div)) + 1;
+	if(amount <= 0) {
+		amount = floor(width / glbl_window_width);
+	}
+	if(amount > 15) {
+		amount = 15;
 	}
 	int new_size = amount * floor((glbl_banks) * glbl_test_trunc);
 	return new_size;
@@ -120,8 +136,12 @@ float* f_realloc(float* input, int length) {
 	if (new_seq != NULL) {
 		return new_seq;
 	} else {
+<<<<<<< Updated upstream
 		printf("Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
 		free(new_seq);
+=======
+		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
+>>>>>>> Stashed changes
 		exit(-1);
 	}
 }
@@ -163,8 +183,12 @@ short* s_realloc(short* input, int length) {
 	if (new_seq != NULL) {
 		return new_seq;
 	} else {
+<<<<<<< Updated upstream
 		printf("Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
 		free(new_seq);
+=======
+		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
+>>>>>>> Stashed changes
 		exit(-1);
 	}
 }	
@@ -202,7 +226,7 @@ short* paa(short* sequence, int length) {
 
 float* dct(float* array, int width)
 {
-	float* result = (float*)malloc(width * sizeof(float));
+	float* result = (float*)calloc(width, sizeof(float));
 	if(result == NULL) 
 		// printf("Failed to malloc 'result' in FFT\n");
 	
@@ -381,7 +405,7 @@ float* mfcc_quick(float* sequence, int width, int incr, int banks, int paa)
 		}
 	}
 	/* Mel filter banks */
-	float** applied_mels = (float**)calloc(amount, sizeof(float*));
+	float** applied_mels = (float**)malloc(amount * sizeof(float*));
 	if(chunks == NULL || mags == NULL || applied_mels == NULL) {
 		return NULL;
 	}
@@ -409,7 +433,7 @@ float* mfcc_quick(float* sequence, int width, int incr, int banks, int paa)
 		free(temp);
 	}
 	int trunc = floor(banks * glbl_test_trunc);
-	float* result = (float*)malloc((amount * trunc) * sizeof(float));
+	float* result = (float*)calloc((amount * trunc), sizeof(float));
 	int last = amount;
 	int n = 0;
 	for(int i = 0; i < amount; i++) {

@@ -8,5 +8,5 @@ uint16_t glbl_banks = 16;
 float glbl_dtw_window = 0.1;
 uint8_t glbl_interval_div = 2;
 uint16_t glbl_nfft = 512;
-float glbl_test_trunc = 0.875;
+float glbl_test_trunc = 0.875f;
 uint8_t glbl_frame_limit = 15;

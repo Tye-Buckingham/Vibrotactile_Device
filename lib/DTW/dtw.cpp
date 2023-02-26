@@ -39,13 +39,14 @@ double** init_dtw_matrix(int signal_length, int phone_length, int w)
 long double dtw_frame_result(float* signal, int signal_length, struct Phoneme* phoneme, int p)
 {
 	phoneme->score = 0;
-	double temp_last_min = 0,  last_min = 0;
+	long double temp_last_min = 0, last_min = 0;
 	int phone_length = 0;
 	int w = 0;
 	long double final_score = 0;
 	int trunc = floor((glbl_banks) * glbl_test_trunc);
-	signal_length = signal_length / trunc;
+	signal_length = frame_amount(signal_length);
 	phone_length = signal_length;
+	
 	long double score = 0;
 	long double cost = 0;
 	int largest = max(signal_length, phone_length);
@@ -58,13 +59,13 @@ long double dtw_frame_result(float* signal, int signal_length, struct Phoneme* p
 		return -11;
 	}
 	double** dtw_matrix = init_dtw_matrix(signal_length, phone_length, w);
-	for(int i = 1; i <= signal_length - 1; i++) {
-		for(int j = max(1, i-w); j <= min(phone_length - 1, i+w); j++) {
+	for(int i = 1; i <= signal_length; i++) {
+		for(int j = max(1, i-w); j <= min(phone_length, i+w); j++) {
 			for(int m = 0; m < trunc; m++) {
-				cost += fabs(signal[(i * trunc) +  m] - phoneme->mfcc[p][(j * trunc) +  m]);
+				cost += fabsl(signal[(i * trunc) +  m] - phoneme->mfcc[p][(j * trunc) +  m]);
 			}
-			temp_last_min = fmin(dtw_matrix[i-1][j], dtw_matrix[i][j-1]);
-			last_min = fmin(temp_last_min, dtw_matrix[i-1][j-1]);
+			temp_last_min = fminl(dtw_matrix[i-1][j], dtw_matrix[i][j-1]);
+			last_min = fminl(temp_last_min, dtw_matrix[i-1][j-1]);
 			dtw_matrix[i][j] = cost + last_min;
 			score = dtw_matrix[i][j];
 			cost = 0;

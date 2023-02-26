@@ -27,7 +27,7 @@
 #include "../Test/test.h"
 
 #define AUDIO_SAMPLE_RATE_EXACT 16000.0f // Redefine so its the same as the data-set we used
-#define WAIT_FOR_DEBUGGER_SECONDS 120
+#define WAIT_FOR_DEBUGGER_SECONDS 10
 #define WAIT_FOR_SERIAL_SECONDS 20
 
 // EXTMEM uint8_t buffer3[3 * 1024 * 1024];
@@ -77,6 +77,7 @@ void setup()
 
 	#ifdef DEBUG
     {   
+		Serial.println("Connecting to debugger:");
         SerialUSB1.begin(19200);
         for (uint8_t i = 0; i < (WAIT_FOR_DEBUGGER_SECONDS); i++)
         {
@@ -145,7 +146,7 @@ Threads::Mutex lock;
 
 void loop()
 {
-
+	while(1) {}
 }
 
 short in_array[32000] = {0}; /* Recorded samples */
@@ -173,22 +174,12 @@ void process_thread()
 
 	while (1)
 	{
-		check_in();
+		update_arrays(1, 0);
 	}
 
 	return;
 }
 
-int check_in(void)
-{
-	if (in_size > 128)
-	{
-		update_arrays(1, 0);
-		return 0;
-	}
-
-	return -1;
-}
 
 void update_arrays(int in, int pr)
 {
@@ -196,7 +187,7 @@ void update_arrays(int in, int pr)
 		delay(1);
 	}
 	
-	if (pr == 0)
+	if ((pr == 0) && (in_size > 128))
 	{
 		if (pr_size += in_size >= 32000)
 		{

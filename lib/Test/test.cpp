@@ -61,6 +61,8 @@ int test_phoneme_utterance(short* h, int signal_length)
 	if(new_size <= 0) {
 		return -3;
 	}
+	free(h);
 	int knn = knn_mfccs_size(signal, new_size, 15);
+	free(signal);
 	return knn;
 }

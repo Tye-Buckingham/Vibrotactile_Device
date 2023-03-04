@@ -12,15 +12,15 @@ extern unsigned long _heap_start;
 extern unsigned long _heap_end;
 extern char *__brkval;
 
-// const char* p_codes[] = {"b", "d", "k", "p", "t", "g",                                                       // Stops [1 - 6] - OBSTRUENT
-// 	                     "jh", "ch",                                                                         // Affri [7 - 8] - OBSTRUENT
-// 			             "s", "sh", "th", "v", "f", "dh", "z",                                               // Frics [9 - 15] - OBSTRUENT
-// 			             "m", "n", "ng",                                                                     // Nasal [16 - 18] - SONORANT
-// 			             "l", "r", "hh", "w", "y",                                                           // Semiv [19 - 23] - SONORANT
-// 	                     "aa", "ae", "ah", "aw", "er", "ay", "eh", "ey", "ih", "iy", "ow", "oy", "uh", "uw", // Vowel [24 - 37] - SONORANT
-// 			             "sil",                                                                              // Other [38] - OTHER
-// 	                "\0"};
-const char* p_codes[] = { "b", "jh", "s", "l", "aa", "\0" };
+const char* p_codes[] = {"b", "d", "k", "p", "t", "g",                                                       // Stops [1 - 6] - OBSTRUENT
+	                     "jh", "ch",                                                                         // Affri [7 - 8] - OBSTRUENT
+			             "s", "sh", "th", "v", "f", "dh", "z",                                               // Frics [9 - 15] - OBSTRUENT
+			             "m", "n", "ng",                                                                     // Nasal [16 - 18] - SONORANT
+			             "l", "r", "hh", "w", "y",                                                           // Semiv [19 - 23] - SONORANT
+	                     "aa", "ae", "ah", "aw", "er", "ay", "eh", "ey", "ih", "iy", "ow", "oy", "uh", "uw", // Vowel [24 - 37] - SONORANT
+			             "sil",                                                                              // Other [38] - OTHER
+	                "\0"};
+// const char* p_codes[] = { "b", "jh", "s", "l", "aa", "\0" };
 
 
 int freeram() {
@@ -186,9 +186,10 @@ void clear_mfccs(struct Phoneme* phone)
 	for(int i = 0; i < phone->use_count; i++) {
 		free(phone->mfcc[i]);
 	}
-	free(phone->mfcc);
-	phone->use_count = 0;
-
+	if(phone->use_count > 0) {
+		free(phone->mfcc);
+		phone->use_count = 0;
+	}
 	return;
 }
 

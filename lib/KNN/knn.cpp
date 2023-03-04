@@ -20,25 +20,25 @@ int knn_mfccs_size(float* test, int test_length, int k)
 	}
 
 	if(n == 0) {
-		return -5;
+		return -1;
 	}
 	
 	to_test = n;
 	struct Guess* gs = (struct Guess*)malloc(sizeof(struct Guess) * to_test);
 	int l = 0;
 	for(int i = 0; i < num_ph; i++) {
-			phones[i] = get_mfcc(phones[i], test_length); 
-			for(int j = 0; j < phones[i]->use_count; j++) {
-				gs[l].diff = dtw_frame_result(test, test_length, phones[i], j);
-				gs[l].guess = i;
-				gs[l].ref_indx = j;
-				gs[l].ref = phones[i];
-				l++;
+		phones[i] = get_mfcc(phones[i], test_length); 
+		for(int j = 0; j < phones[i]->use_count; j++) {
+			gs[l].diff = dtw_frame_result(test, test_length, phones[i], j);
+			gs[l].guess = i;
+			gs[l].ref_indx = j;
+			gs[l].ref = phones[i];
+			l++;
 		}
 		clear_mfccs(phones[i]);
 	}
 	qsort(gs, to_test, sizeof(struct Guess), guesscomp);
-	int* modes = (int*)calloc(num_ph, sizeof(int));
+	int modes[num_ph] = {0};
 	
 	for(int i = 0; i < num_ph; i++) {
 		modes[i] = 0;
@@ -60,6 +60,5 @@ int knn_mfccs_size(float* test, int test_length, int k)
 		}
 	}
 	free(gs);
-	free(modes);
 	return result;
 }

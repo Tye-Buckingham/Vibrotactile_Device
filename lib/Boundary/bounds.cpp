@@ -1,4 +1,5 @@
 #include "bounds.h"
+#include <Arduino.h>
 
 int is_positive(short num)
 {
@@ -36,7 +37,7 @@ float* hanning_window(int num)
 {
 	float* window = (float*)malloc(num * sizeof(float));
 	if(window == NULL) 
-		printf("Failed to malloc 'window' in hanning\n");
+		Serial.println(F("Failed to malloc 'window' in hanning"));
 	for(int i = 0; i < num; i++) {
 		window[i] = 0.5 * (1 - cos(2*M_PI*(i+1)/(num + 1)));
 	}
@@ -47,25 +48,10 @@ float* hanning_window(int num)
 float short_time_energy(short* signal, int signal_length, int window_length)
 {
 	float result = 0;
-	float* window = hanning_window(window_length);
-	float* ste_buff = (float*)calloc(signal_length, sizeof(float));
-	int pos = 0, incr = 1;
-	for(int i = 0; i < signal_length; i++) {
-		ste_buff[i] = (signal[i] * signal[i]); // * window[pos];
-		pos++;
-		if(pos == glbl_window_width) {
-			pos = 0;
-			incr++;
-		}
-	}
 
 	for(int i = 0; i < signal_length; i++) {
-		result += ste_buff[i];
-		
+		result += (signal[i] * signal[i]);
 	}
-	result /= incr;
-	free(window);
-	free(ste_buff);
 	return result;
 }
 

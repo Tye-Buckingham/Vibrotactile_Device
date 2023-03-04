@@ -26,8 +26,10 @@
 #include "../Misc/tl_includes.h"
 #include "../Test/test.h"
 
+#define BUFF_SIZE 24000
+
 #define AUDIO_SAMPLE_RATE_EXACT 16000.0f // Redefine so its the same as the data-set we used
-#define WAIT_FOR_DEBUGGER_SECONDS 10
+#define WAIT_FOR_DEBUGGER_SECONDS 1
 #define WAIT_FOR_SERIAL_SECONDS 20
 
 // EXTMEM uint8_t buffer3[3 * 1024 * 1024];
@@ -149,8 +151,8 @@ void loop()
 	while(1) {}
 }
 
-short in_array[32000] = {0}; /* Recorded samples */
-short pr_array[32000] = {0}; /* Recorded samples to be processed*/
+short in_array[BUFF_SIZE] = {0}; /* Recorded samples */
+short pr_array[BUFF_SIZE] = {0}; /* Recorded samples to be processed*/
 
 int in_size = 0;
 int pr_size = 0;
@@ -189,7 +191,7 @@ void update_arrays(int in, int pr)
 	
 	if ((pr == 0) && (in_size > 128))
 	{
-		if (pr_size += in_size >= 32000)
+		if (pr_size += in_size >= BUFF_SIZE)
 		{
 			pr_size = 0;
 		}
@@ -213,7 +215,7 @@ void update_arrays(int in, int pr)
 	}
 	else
 	{
-		if (in_size + 10 >= 32000)
+		if (in_size + 512 >= BUFF_SIZE)
 		{
 			in_size = 0;
 		}
@@ -276,6 +278,7 @@ void boundary(void)
 		if(result < 0) {
 			Serial.println(F("Sil")); 
 		} else {
+			Serial.println(result);
 			Serial.println(phones[result]->index->name);
 		}
 		pr_size = shift_and_reduce(pr_array, pr_size, bound);

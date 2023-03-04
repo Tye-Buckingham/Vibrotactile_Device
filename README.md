@@ -11,10 +11,8 @@
  can be found in the report found in my `Phoneme Recogniser` repo. 
  
  This project will continue to see updates and is currently not in a usable
- state due to the device crashing, some fixes have been made with some 
- degree of remedy, but ultimately a re-write of the code from dynamic 
- to static memory appears to be necessary. 
- 
- In addition to this re-write I am currently testing the phoneme recogniser
- with the use of ML rather than the current KNN methods. Both this and 
- the `Phoneme Recogniser` project will be updated when progress is made.
+ state. The latest fix allows the device to run continuously without crashing,
+ but only for a small subset. Though steps were made to reduce model size, 
+ the model still requires a substantial number of prototypes, leading to high 
+ memory usage and slow time-to-test. As such the focus will remain on 
+ implementing a new classification method to reduce these requirements. 

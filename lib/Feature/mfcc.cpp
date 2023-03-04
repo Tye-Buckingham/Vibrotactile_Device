@@ -45,12 +45,12 @@ float** mel_fb(int width, int banks)
 	float* f = (float*)calloc(banks + 2, sizeof(float));
 	
 	float** H = (float**)malloc(width * sizeof(float*));
-	//if(H == NULL)
-	//	printf("Failed to malloc H in mel_fb\n");
+	if(H == NULL)
+		Serial.println(F("Failed to malloc H in mel_fb"));
 	for(int i = 0; i < width; i++) {
 		H[i] = (float*)calloc(banks + 2, sizeof(float));
-		//if(H[i] == NULL)
-		//	printf("Failed to calloc H[i] in mel_fb\n");
+		if(H[i] == NULL)
+			Serial.println(F("Failed to calloc H[i] in mel_fb"));
 		for(int n = 0; n < banks + 2; n++) {
 			H[i][n] = 0;
 		}
@@ -87,13 +87,13 @@ float* mel(float* array, int width, int banks)
 {
 	float* result = (float*)calloc(banks, sizeof(float));
 	float** melfb = mel_fb(width, banks);
-	float** applied = (float**)calloc(width, sizeof(float*));
-	// if(result == NULL || melfb == NULL || applied == NULL)
-		// printf("Malloc/Calloc error in mel\n");
+	float** applied = (float**)malloc(width * sizeof(float*));
+	if(result == NULL || melfb == NULL || applied == NULL)
+		Serial.println(F("Malloc/Calloc error in mel"));
 	for(int i = 0; i < width; i++) {
 		applied[i] = (float*)calloc(banks, sizeof(float));
-		// if(applied[i] == NULL)
-		// printf("Failed to calloc applied[i]\n");
+		if(applied[i] == NULL)
+			Serial.println(F("Failed to calloc applied[i]"));
 		for(int j = 0; j < banks; j++) {
 			applied[i][j] = 0;
 		}
@@ -112,7 +112,6 @@ float* mel(float* array, int width, int banks)
 			result[j] += applied[i][j];
 		}		
 	}
-	// maybe change
 	for(int i = 0; i < banks; i++) {
 		result[i] = result[i] / banks;
 	}
@@ -136,12 +135,7 @@ float* f_realloc(float* input, int length) {
 	if (new_seq != NULL) {
 		return new_seq;
 	} else {
-<<<<<<< Updated upstream
-		printf("Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
-		free(new_seq);
-=======
-		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
->>>>>>> Stashed changes
+		Serial.println(F("Memory error in realloc"));
 		exit(-1);
 	}
 }
@@ -157,7 +151,7 @@ float* f_paa(float* sequence, int length) {
 	float* new_seq = f_realloc(sequence, n_length);
 	
 	if (new_seq == NULL) {
-		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(float)));
+		Serial.println(F("Memory error, trying to allocate length which is bytes"));
 		free(sequence);
 		exit(-1);
 	}
@@ -183,12 +177,7 @@ short* s_realloc(short* input, int length) {
 	if (new_seq != NULL) {
 		return new_seq;
 	} else {
-<<<<<<< Updated upstream
-		printf("Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
-		free(new_seq);
-=======
-		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
->>>>>>> Stashed changes
+		Serial.println(F("Memory error in realloc"));
 		exit(-1);
 	}
 }	
@@ -205,7 +194,7 @@ short* paa(short* sequence, int length) {
 	short* new_seq = s_realloc(sequence, n_length);
 
 	if (new_seq == NULL) {
-		// fprintf(stderr, "Memory error, trying to allocate %d length which is %d bytes.\n", (int)length, (int)(length*sizeof(short)));
+		Serial.println(F("Memory error, trying to allocate length which is bytes."));
 		free(sequence);
 		exit(-1);
 	}
@@ -228,7 +217,7 @@ float* dct(float* array, int width)
 {
 	float* result = (float*)calloc(width, sizeof(float));
 	if(result == NULL) 
-		// printf("Failed to malloc 'result' in FFT\n");
+		Serial.println(F("Failed to malloc 'result' in FFT"));
 	
 	for(int i = 0; i < width; i++) {
 		float sum = 0;
@@ -252,7 +241,7 @@ std::complex<float>* fft(std::complex<float>* chunk, int length)
 	std::complex<float>* even = new std::complex<float>[length / 2];
 	std::complex<float>* odd = new std::complex<float>[length / 2];
 	if(odd == NULL || even == NULL) {
-		// printf("Failed to malloc 'odd || even' in FFT\n");
+		Serial.println(F("Failed to malloc 'odd || even' in FFT"));
 	}
 	int e = 0, o = 0;
 	for(int i = 0; i < length; i++) {
@@ -268,7 +257,7 @@ std::complex<float>* fft(std::complex<float>* chunk, int length)
 	std::complex<float>* y_odd = fft(odd, length / 2);
 	std::complex<float>* y = new std::complex<float>[length];
 	if(y == NULL) {
-		// printf("Failed to malloc 'y' in FFT\n");
+		Serial.println(F("Failed to malloc 'y' in FFT"));
 	}
 	for(int j = 0; j < length / 2; j++) {
 		y[j] = y_even[j] + (pow(w, j) * y_odd[j]);
@@ -288,13 +277,13 @@ float** fft_chunks(float** chunks, int n, int length)
 {
 	std::complex<float>* fft_buff =  new std::complex<float>[length];
 	std::complex<float>* result;
-	float** mag = (float**)calloc(n, sizeof(float*));
-	// if(mag == NULL)
-		// printf("Failed to malloc 'mag' in fft\n");
+	float** mag = (float**)malloc(n *sizeof(float*));
+	if(mag == NULL)
+		Serial.println(F("Failed to malloc 'mag' in fft"));
 	for(int i = 0; i < n; i++) {
 		mag[i] = (float*)calloc((length / 2), sizeof(float));
-		// if(mag[i] == NULL)
-			// printf("Failed to malloc 'mag[i]' in fft\n");
+		if(mag[i] == NULL)
+			Serial.println(F("Failed to malloc 'mag[i]' in fft"));
 	}
 	for(int m = 0; m < n; m++) {
 		for(int i = 0; i < length; i++) {

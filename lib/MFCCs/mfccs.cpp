@@ -30,11 +30,6 @@ int freeram() {
 
 void load_from_file(struct Phoneme* phone)
 {
-	
-	// char base[16];
-	// // Serial.print(F("Loading :: "));
-	// // Serial.println(phone->index->name);
-	// sprintf(base, "/device/%s", phone->index->name);
 
 	char filepath[32];
 
@@ -95,11 +90,13 @@ struct Phoneme* get_mfcc(struct Phoneme* phone, int test_length)
 		}
 	}
 	if(count == 0) {
+		phone->use_count = 0;
+		Serial.println(F("No phonemes found"));
 		return phone;
 	}
 	phone->mfcc = (float**)malloc(count * sizeof(float*));
 	if(phone->mfcc == NULL) {
-			// Serial.println(F("Error making mfcc"));
+			Serial.println(F("Error making mfcc"));
 	}
 	count = 0;
 	File mfcc_file;
@@ -110,13 +107,13 @@ struct Phoneme* get_mfcc(struct Phoneme* phone, int test_length)
 		sprintf(filename, "/device/%s/%d_%d.phn", phone->index->name, phone->size[i], count);
 		phone->mfcc[phone->use_count] = (float*)calloc(phone->size[i], sizeof(float));
 		if(phone->mfcc[phone->use_count] == NULL) {
-			// Serial.println(F("Error making mfcc"));
+			Serial.println(F("Error making mfcc"));
 		}
 		mfcc_file = SD.open(filename, FILE_READ); 
 		
 		if(!mfcc_file) {
-				// Serial.print(F("Failed to open "));
-				// Serial.println(filename);
+				Serial.print(F("Failed to open "));
+				Serial.println(filename);
 				return NULL;
 		}
 		int n = 0, t = 0;
@@ -186,8 +183,10 @@ void clear_mfccs(struct Phoneme* phone)
 	for(int i = 0; i < phone->use_count; i++) {
 		free(phone->mfcc[i]);
 	}
-	free(phone->mfcc);
-	phone->use_count = 0;
+	if(phone->use_count > 0) {
+		free(phone->mfcc);
+		phone->use_count = 0;
+	}
 
 	return;
 }

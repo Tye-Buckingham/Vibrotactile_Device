@@ -12,15 +12,15 @@ extern unsigned long _heap_start;
 extern unsigned long _heap_end;
 extern char *__brkval;
 
-// const char* p_codes[] = {"b", "d", "k", "p", "t", "g",                                                       // Stops [1 - 6] - OBSTRUENT
-// 	                     "jh", "ch",                                                                         // Affri [7 - 8] - OBSTRUENT
-// 			             "s", "sh", "th", "v", "f", "dh", "z",                                               // Frics [9 - 15] - OBSTRUENT
-// 			             "m", "n", "ng",                                                                     // Nasal [16 - 18] - SONORANT
-// 			             "l", "r", "hh", "w", "y",                                                           // Semiv [19 - 23] - SONORANT
-// 	                     "aa", "ae", "ah", "aw", "er", "ay", "eh", "ey", "ih", "iy", "ow", "oy", "uh", "uw", // Vowel [24 - 37] - SONORANT
-// 			             "sil",                                                                              // Other [38] - OTHER
-// 	                "\0"};
-const char* p_codes[] = { "b", "jh", "s", "l", "aa", "\0" };
+const char* p_codes[] = {"b", "d", "k", "p", "t", "g",                                                       // Stops [1 - 6] - OBSTRUENT
+	                     "jh", "ch",                                                                         // Affri [7 - 8] - OBSTRUENT
+			             "s", "sh", "th", "v", "f", "dh", "z",                                               // Frics [9 - 15] - OBSTRUENT
+			             "m", "n", "ng",                                                                     // Nasal [16 - 18] - SONORANT
+			             "l", "r", "hh", "w", "y",                                                           // Semiv [19 - 23] - SONORANT
+	                     "aa", "ae", "ah", "aw", "er", "ay", "eh", "ey", "ih", "iy", "ow", "oy", "uh", "uw", // Vowel [24 - 37] - SONORANT
+			             "sil",                                                                              // Other [38] - OTHER
+	                "\0"};
+// const char* p_codes[] = { "b", "jh", "s", "l", "aa", "\0" };
 
 
 int freeram() {
@@ -30,6 +30,11 @@ int freeram() {
 
 void load_from_file(struct Phoneme* phone)
 {
+	
+	// char base[16];
+	// // Serial.print(F("Loading :: "));
+	// // Serial.println(phone->index->name);
+	// sprintf(base, "/device/%s", phone->index->name);
 
 	char filepath[32];
 
@@ -90,13 +95,11 @@ struct Phoneme* get_mfcc(struct Phoneme* phone, int test_length)
 		}
 	}
 	if(count == 0) {
-		phone->use_count = 0;
-		Serial.println(F("No phonemes found"));
 		return phone;
 	}
 	phone->mfcc = (float**)malloc(count * sizeof(float*));
 	if(phone->mfcc == NULL) {
-			Serial.println(F("Error making mfcc"));
+			// Serial.println(F("Error making mfcc"));
 	}
 	count = 0;
 	File mfcc_file;
@@ -107,13 +110,13 @@ struct Phoneme* get_mfcc(struct Phoneme* phone, int test_length)
 		sprintf(filename, "/device/%s/%d_%d.phn", phone->index->name, phone->size[i], count);
 		phone->mfcc[phone->use_count] = (float*)calloc(phone->size[i], sizeof(float));
 		if(phone->mfcc[phone->use_count] == NULL) {
-			Serial.println(F("Error making mfcc"));
+			// Serial.println(F("Error making mfcc"));
 		}
 		mfcc_file = SD.open(filename, FILE_READ); 
 		
 		if(!mfcc_file) {
-				Serial.print(F("Failed to open "));
-				Serial.println(filename);
+				// Serial.print(F("Failed to open "));
+				// Serial.println(filename);
 				return NULL;
 		}
 		int n = 0, t = 0;
@@ -187,7 +190,6 @@ void clear_mfccs(struct Phoneme* phone)
 		free(phone->mfcc);
 		phone->use_count = 0;
 	}
-
 	return;
 }
 

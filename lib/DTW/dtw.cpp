@@ -13,27 +13,21 @@ int min(int a, int b)
 	if(a < b) { return a; } else { return b; }
 }
 
-double** init_dtw_matrix(int signal_length, int phone_length, int w)
+void init_dtw_matrix(double dtw_matrix[glbl_frame_limit][glbl_frame_limit])
 {
-	double** dtw_matrix = (double**)malloc(signal_length *  sizeof(double*));
-	if(dtw_matrix == NULL) {
-		return NULL;
-	}
-	for(int i = 0; i < signal_length; i++) {
-		dtw_matrix[i] = (double*)malloc(phone_length * sizeof(double));
-	}
-	for(int i = 0; i < signal_length; i++) {
-		for(int j = 0; j < phone_length; j++) {
+
+	for(int i = 0; i < glbl_frame_limit; i++) {
+		for(int j = 0; j < glbl_frame_limit; j++) {
 			dtw_matrix[i][j] = DBL_MAX;
 		}
 	}
 	dtw_matrix[0][0] = 0;
-	for(int i = 0; i < signal_length; i++) {
-		for(int j = 0; j < phone_length; j++) {
+	for(int i = 0; i < glbl_frame_limit; i++) {
+		for(int j = 0; j < glbl_frame_limit; j++) {
 			dtw_matrix[i][j] = 0;
 		}
 	}
-	return dtw_matrix;
+	return;
 }
 
 long double dtw_frame_result(float* signal, int signal_length, struct Phoneme* phoneme, int p)
@@ -58,7 +52,8 @@ long double dtw_frame_result(float* signal, int signal_length, struct Phoneme* p
 	if(phone_length == 0) {
 		return -11;
 	}
-	double** dtw_matrix = init_dtw_matrix(signal_length, phone_length, w);
+	double dtw_matrix[glbl_frame_limit][glbl_frame_limit] = {0.0f};
+	init_dtw_matrix(dtw_matrix);
 	for(int i = 1; i <= signal_length; i++) {
 		for(int j = max(1, i-w); j <= min(phone_length, i+w); j++) {
 			for(int m = 0; m < trunc; m++) {
@@ -72,9 +67,6 @@ long double dtw_frame_result(float* signal, int signal_length, struct Phoneme* p
 		}
 	}
 	final_score = score;	
-	for(int i = 0; i < signal_length; i++) {
-		free(dtw_matrix[i]);
-	}
-	free(dtw_matrix);
+
 	return final_score;
 }

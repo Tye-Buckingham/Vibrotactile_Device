@@ -33,17 +33,6 @@ float get_entropy(short* sequence, int inc)
 	return entropy;
 }
 
-float* hanning_window(int num)
-{
-	float* window = (float*)malloc(num * sizeof(float));
-	if(window == NULL) 
-		Serial.println(F("Failed to malloc 'window' in hanning"));
-	for(int i = 0; i < num; i++) {
-		window[i] = 0.5 * (1 - cos(2*M_PI*(i+1)/(num + 1)));
-	}
-
-	return window; 
-}
 
 float short_time_energy(short* signal, int signal_length, int window_length)
 {
